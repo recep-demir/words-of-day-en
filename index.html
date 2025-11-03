@@ -4,66 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Word of the Day</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #f5f7fa;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .word-card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      margin-bottom: 10px;
-      overflow: hidden;
-    }
-    .dropdown {
-      width: 100%;
-      text-align: left;
-      background: #0078d7;
-      color: white;
-      font-size: 1.1em;
-      padding: 12px;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .dropdown:hover {
-      background: #005fa3;
-    }
-    .dropdown span {
-      font-size: 0.9em;
-      opacity: 0.8;
-      float: right;
-    }
-    .content {
-      display: none;
-      padding: 12px;
-      background: #f9f9f9;
-      color: #333;
-      font-size: 0.95em;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 10px;
-      }
-      .dropdown {
-        font-size: 1em;
-        padding: 10px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
@@ -73,18 +14,14 @@
 
   <script>
     async function loadWords() {
-      const res = await fetch('english_words_multilang_clean_1000.json');
+      const res = await fetch('english_words_multilang_1000.json');
       const words = await res.json();
 
-      // Günlük sabit ama karışık 7 kelime seç
+      // Günlük index oluştur
       const today = new Date();
-      const seed = today.getFullYear() * 1000 + (today.getMonth() + 1) * 50 + today.getDate();
-      function seededRandom(seed) {
-        const x = Math.sin(seed) * 10000;
-        return x - Math.floor(x);
-      }
-      const shuffled = [...words].sort(() => seededRandom(seed) - 0.5);
-      const todayWords = shuffled.slice(0, 7);
+      const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+      const start = (dayIndex * 7) % words.length;
+      const todayWords = words.slice(start, start + 7);
 
       const list = document.getElementById('wordList');
       list.innerHTML = "";
