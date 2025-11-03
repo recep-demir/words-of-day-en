@@ -17,11 +17,17 @@
       const res = await fetch('english_words_multilang_1000.json');
       const words = await res.json();
 
-      // Günlük index oluştur
-      const today = new Date();
-      const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
-      const start = (dayIndex * 7) % words.length;
-      const todayWords = words.slice(start, start + 7);
+      // Rastgele 7 kelime seç (benzersiz)
+      function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      }
+
+      const copy = words.slice(); // or [...words]
+      shuffleArray(copy);
+      const todayWords = copy.slice(0, Math.min(7, copy.length));
 
       const list = document.getElementById('wordList');
       list.innerHTML = "";
