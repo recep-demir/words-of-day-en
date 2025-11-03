@@ -1,11 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word of the Day</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    
+  <div class="container">
+    <h1>Word of the Day</h1>
+    <div id="wordList"></div>
+  </div>
+
+  <script>
+    async function loadWords() {
+      const res = await fetch('english_words_multilang_1000.json');
+      const words = await res.json();
+
+      // Günlük index oluştur
+      const today = new Date();
+      const dayIndex = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+      const start = (dayIndex * 7) % words.length;
+      const todayWords = words.slice(start, start + 7);
+
+      const list = document.getElementById('wordList');
+      list.innerHTML = "";
+
+      todayWords.forEach(w => {
+        const card = document.createElement('div');
+        card.className = "word-card";
+        card.innerHTML = `
+          <button class="dropdown">${w.word} <span>${w.pronunciation}</span></button>
+          <div class="content">
+            <p><b>Part of Speech:</b> ${w.partOfSpeech}</p>
+            <p><b>Meaning:</b> ${w.meaning1}</p>
+            ${w.meaning2 ? `<p><b>Meaning 2:</b> ${w.meaning2}</p>` : ""}
+            <p><b>Example:</b> ${w.example1}</p>
+            ${w.example2 ? `<p><b>Example 2:</b> ${w.example2}</p>` : ""}
+            <p><b>Turkish:</b> ${w.turkish}</p>
+            <p><b>German:</b> ${w.german}</p>
+            <p><b>Level:</b> ${w.level}</p>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+
+      document.querySelectorAll(".dropdown").forEach(btn => {
+        btn.addEventListener("click", () => {
+          btn.classList.toggle("active");
+          const content = btn.nextElementSibling;
+          content.style.display = content.style.display === "block" ? "none" : "block";
+        });
+      });
+    }
+
+    loadWords();
+  </script>
 </body>
 </html>
